@@ -52,10 +52,6 @@ export default {
 
 		bot.use((ctx, n) => {
 			if (ctx.chat && ['group', 'supergroup'].includes(ctx.chat.type)) {
-				if (ctx.chat.id !== -1001438438788) {
-					return;
-				}
-
 				return n();
 			}
 
