@@ -104,16 +104,14 @@ export default {
 			const [cb_data, _, from_id] = ctx.match;
 			const MS_5_MINUTES = 5 * 60 * 1000;
 
-			await ctx.deleteMessage();
-
-			console.log(ctx.callbackQuery.message?.date);
-
 			if (ctx.from.id !== Number(from_id)) {
 				return ctx.answerCallbackQuery({
 					text: "Bossa bo'larkan deb bosurasizmi?",
 					show_alert: true,
 				});
 			}
+
+			await ctx.deleteMessage();
 
 			const message_str = await env.kv.get(cb_data);
 
