@@ -104,14 +104,18 @@ export default {
 			const [cb_data, _, from_id] = ctx.match;
 			const MS_5_MINUTES = 5 * 60 * 1000;
 
-			if (ctx.from.id !== Number(from_id)) {
+			// istalgan odam bossa 5 minutdan ko'p bo'lgan bo'lsa o'chirib yuboradi
+			if (ctx.callbackQuery.message && new Date().getTime() / 1000 - ctx.callbackQuery.message.date > MS_5_MINUTES) {
+				await ctx.deleteMessage();
+			}
+
+			// 5 minutdan ko'p bo'lsa faqat usha user bosganda ishlidi
+			else if (ctx.from.id !== Number(from_id)) {
 				return ctx.answerCallbackQuery({
 					text: "Bossa bo'larkan deb bosurasizmi?",
 					show_alert: true,
 				});
 			}
-
-			await ctx.deleteMessage();
 
 			const message_str = await env.kv.get(cb_data);
 
