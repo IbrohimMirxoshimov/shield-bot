@@ -138,7 +138,7 @@ export default {
 				await ctx.promoteChatMember(ctx.from.id, {
 					can_post_messages: true,
 				});
-
+				await ctx.deleteMessage();
 				return ctx.answerCallbackQuery({
 					text: "Bo'ldi yozuring!",
 					show_alert: true,
