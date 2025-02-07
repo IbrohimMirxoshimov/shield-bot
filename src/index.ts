@@ -61,7 +61,9 @@ export default {
 		});
 
 		bot.on(':new_chat_members', async (ctx) => {
-			await ctx.deleteMessage();
+			ctx.deleteMessage().catch((e) => {
+				console.log(ctx.update, e);
+			});
 
 			if (!ctx.from) return;
 
