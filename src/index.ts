@@ -127,7 +127,7 @@ export default {
 
 			await env.kv.delete(cb_data);
 
-			if (!message_str) return;
+			if (!message_str) return ctx.deleteMessage();
 
 			const message: {
 				date: number;
