@@ -61,43 +61,47 @@ export default {
 		});
 
 		bot.on(':new_chat_members', async (ctx) => {
-			ctx.deleteMessage().catch((e) => {
-				console.log(ctx.update, e);
-			});
+			try {
+				ctx.deleteMessage().catch((e) => {
+					console.log(ctx.update, e);
+				});
 
-			if (!ctx.from) return;
+				if (!ctx.from) return;
 
-			await ctx.restrictChatMember(ctx.from.id, {
-				can_send_messages: false,
-				can_send_audios: false,
-				can_send_documents: false,
-				can_send_photos: false,
-				can_send_videos: false,
-				can_send_video_notes: false,
-				can_send_voice_notes: false,
-				can_send_polls: false,
-				can_send_other_messages: false,
-			});
+				const key = `nr:${ctx.chat.id}:${ctx.from.id}`;
 
-			const key = `nr:${ctx.chat.id}:${ctx.from.id}`;
+				const msg = await ctx.reply(
+					`Assalomu alaykum <a href="tg://user?id=${ctx.from.id}">${ctx.from.first_name} ${
+						ctx.from.last_name || ''
+					}</a>\n\nGuruhga yozish uchun quyidagi tugmani bosing`,
+					{
+						reply_markup: new InlineKeyboard().text('Men odamman', key),
+						parse_mode: 'HTML',
+					}
+				);
 
-			const msg = await ctx.reply(
-				`Assalomu alaykum <a href="tg://user?id=${ctx.from.id}">${ctx.from.first_name} ${
-					ctx.from.last_name || ''
-				}</a>\n\nGuruhga yozish uchun quyidagi tugmani bosing`,
-				{
-					reply_markup: new InlineKeyboard().text('Men odamman', key),
-					parse_mode: 'HTML',
-				}
-			);
+				await env.kv.put(
+					key,
+					JSON.stringify({
+						date: new Date().getTime(),
+						message_id: msg.message_id,
+					})
+				);
 
-			await env.kv.put(
-				key,
-				JSON.stringify({
-					date: new Date().getTime(),
-					message_id: msg.message_id,
-				})
-			);
+				await ctx.restrictChatMember(ctx.from.id, {
+					can_send_messages: false,
+					can_send_audios: false,
+					can_send_documents: false,
+					can_send_photos: false,
+					can_send_videos: false,
+					can_send_video_notes: false,
+					can_send_voice_notes: false,
+					can_send_polls: false,
+					can_send_other_messages: false,
+				});
+			} catch (error) {
+				return;
+			}
 		});
 
 		bot.callbackQuery(/nr:(-\d+):(\d+)/, async (ctx) => {
