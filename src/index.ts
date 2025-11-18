@@ -85,7 +85,10 @@ export default {
 					JSON.stringify({
 						date: new Date().getTime(),
 						message_id: msg.message_id,
-					})
+					}),
+					{
+						expirationTtl: 60 * 60 * 24 * 2, // 2 kun (2 days in seconds)
+					}
 				);
 
 				await ctx.restrictChatMember(ctx.from.id, {
