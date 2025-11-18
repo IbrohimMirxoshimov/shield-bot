@@ -111,8 +111,8 @@ export default {
 			const MS_5_MINUTES = 5 * 60 * 1000;
 
 			// istalgan odam bossa 5 minutdan ko'p bo'lgan bo'lsa o'chirib yuboradi
-			if (ctx.callbackQuery.message && new Date().getTime() / 1000 - ctx.callbackQuery.message.date > MS_5_MINUTES) {
-				await ctx.deleteMessage();
+			if (ctx.callbackQuery.message && new Date().getTime() - ctx.callbackQuery.message.date * 1000 > MS_5_MINUTES) {
+				ctx.deleteMessage().catch(() => {});
 			}
 
 			// 5 minutdan ko'p bo'lsa faqat usha user bosganda ishlidi
@@ -127,14 +127,14 @@ export default {
 
 			await env.kv.delete(cb_data);
 
-			if (!message_str) return ctx.deleteMessage();
+			if (!message_str) return ctx.deleteMessage().catch(() => {});
 
 			const message: {
 				date: number;
 				message_id: number;
 			} = JSON.parse(message_str);
 
-			if (new Date().getTime() - message.date < MS_5_MINUTES) {
+			if (new Date().getTime() - message.date * 1000 < MS_5_MINUTES) {
 				await ctx.promoteChatMember(ctx.from.id, {
 					can_post_messages: true,
 				});
